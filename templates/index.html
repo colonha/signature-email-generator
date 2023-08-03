@@ -4,14 +4,31 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Generator</title>
+    <title>Email Signature Generator</title>
+    <style>
+        /* Add some basic styling */
+        form {
+            width: 300px;
+            margin: 0 auto;
+        }
+        button, select, input {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    <select id="cityDropdown">
-        <!-- Options will be populated here from the API -->
-    </select>
-    <button onclick="generateEmail()">Generate Email</button>
-    <p id="generatedEmail"></p>
+    <form id="signatureForm">
+        <input type="text" id="name" placeholder="Name">
+        <input type="text" id="surname" placeholder="Surname">
+        <input type="text" id="phone" placeholder="Phone">
+        <select id="cityDropdown">
+            <!-- Options will be populated here from the API -->
+        </select>
+        <input type="text" id="email" placeholder="Email (without domain)">
+        <button type="button" onclick="generateSignature()">Generate Signature</button>
+    </form>
+    <hr>
+    <div id="generatedSignature"></div>
 
     <script>
         // Fetch cities from API and populate dropdown
@@ -25,21 +42,24 @@
             });
         });
 
-
-        function generateEmail() {
+        function generateSignature() {
+            const name = document.getElementById('name').value;
+            const surname = document.getElementById('surname').value;
+            const phone = document.getElementById('phone').value;
             const city = document.getElementById('cityDropdown').value;
-            fetch('/generate_email', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `city=${city}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('generatedEmail').textContent = data.email;
-            });
+            const emailPrefix = document.getElementById('email').value;
+
+            // Construct the signature
+            const signatureHTML = `
+            <strong>${name} ${surname}</strong><br>
+            ${phone}<br>
+            ${city}<br>
+            ${emailPrefix}@mydomain.com
+            `;
+
+            document.getElementById('generatedSignature').innerHTML = signatureHTML;
         }
     </script>
 </body>
 </html>
+
